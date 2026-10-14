@@ -1,45 +1,156 @@
-# MaxProgress — site
+<div align="center">
 
-Landing page do app: celular 3D que **gira conforme você rola** (no computador fica ao lado do texto; no celular fica no alto, com o texto embaixo), seções de recursos, tema escuro/claro, roteiro, tecnologia e dúvidas, mais uma página de **case study** (`case-study.html`) e as páginas legais (privacidade e exclusão de conta).
-HTML + CSS + JS puro (sem build), pronto para GitHub Pages.
+# MaxProgress
 
-## Rodar
-Abra `index.html` direto no navegador, ou sirva a pasta: `python3 -m http.server 8000`.
+**Diário de treino para Android: registre carga e repetições em segundos e acompanhe a sua evolução.**
 
-## Trocar as telas
-Cada tela tem uma versão escura e uma clara, com o mesmo nome, em `assets/screens/dark/` e `assets/screens/light/`: `01-inicio`, `02-registrar`, `03-musculos`, `04-evolucao`, `05-historico` (`.webp`, ~780×1688). As duas versões devem ter o mesmo conteúdo e a mesma rolagem, para o slider ficar alinhado. Antes de publicar, apague a barra de status do celular (notificações) e dados pessoais (e-mail, nome). **Não use a tela Conta.**
+[![Site](https://img.shields.io/badge/site-ao%20vivo-F4632A?style=flat-square)](https://andreyvid.github.io/maxprogress-site/)
+[![CI](https://github.com/Andreyvid/maxprogress-site/actions/workflows/site.yml/badge.svg)](https://github.com/Andreyvid/maxprogress-site/actions/workflows/site.yml)
+![Status](https://img.shields.io/badge/app-beta-444?style=flat-square)
+![Lighthouse](https://img.shields.io/badge/Lighthouse-97%20%7C%20100%20%7C%20100%20%7C%20100-brightgreen?style=flat-square)
 
-## Tema escuro/claro
-`js/theme.js` alterna `data-theme` no `<html>` (escolha salva em `localStorage`; padrão = preferência do sistema). As cores ficam em variáveis no topo de `css/style.css`.
-O celular 3D e as telas simples mostram automaticamente a versão do tema atual do site. Na seção "Escuro e claro", um slider compara os dois temas do app lado a lado.
+[**Ver o site**](https://andreyvid.github.io/maxprogress-site/) · [Case study](https://andreyvid.github.io/maxprogress-site/case-study.html) · [Política de privacidade](https://andreyvid.github.io/maxprogress-site/privacidade.html)
 
-## Como funciona
-- `js/main.js`: uma timeline GSAP ligada à rolagem (ScrollTrigger com `pin` + `scrub`). Constantes no topo (`HOLD`, `MOVE`, `OFFSET`, `TURN`, `SCROLL_PER_UNIT`) controlam ritmo, distância e giro.
-- `css/style.css`: celular em CSS 3D (`perspective`, `preserve-3d`, camadas empilhadas para a espessura).
-- Versão simples (telas empilhadas) em: telas < 900px ou baixas, `prefers-reduced-motion`, sem JS, ou se o GSAP falhar. A classe `is-3d` liga o modo animado.
+<img src="docs/banner.png" alt="Cinco telas do app MaxProgress, nos temas escuro e claro: início, registro de treino, mapa de músculos, evolução do exercício e histórico." width="900">
+
+</div>
+
+## O que é este repositório
+
+O **MaxProgress** é um app de academia que eu desenvolvo sozinho, em português. O **código do app é privado**; este repositório é o **site de apresentação** (e o meu portfólio): ele mostra o app com prints reais, conta as decisões por trás dele e reúne as páginas exigidas para publicar na Play Store.
+
+Também é um projeto de prática de **entrega contínua**: o site tem testes automáticos, medição de qualidade e deploy sem etapas manuais.
+
+## O que tem no site
+
+- **Celular 3D que gira com a rolagem.** Cada tela do app aparece conforme você rola a página (CSS 3D + GSAP ScrollTrigger). Há uma versão própria para celular e uma versão simples, sem movimento, para quem prefere menos animação.
+- **Tema escuro e claro.** O site e as telas do app seguem o tema escolhido. Um slider compara os dois temas do app na mesma tela.
+- **Case study** do projeto: problema, decisões de arquitetura, o que deu errado e o que aprendi.
+- **Páginas legais** em conformidade com a LGPD: política de privacidade e como excluir a conta e os dados.
+- **Acessibilidade e desempenho:** navegação por teclado, textos alternativos, fontes locais e imagens otimizadas.
+
+## O app
+
+| | |
+|---|---|
+| **Registrar** | carga, repetições e séries por exercício, com busca que perdoa erros de digitação (acentos, plural, letras trocadas) |
+| **Mapa de músculos** | mostra quais músculos cada exercício trabalha, principais e auxiliares |
+| **Evolução** | gráfico de carga e repetições, com recorde pessoal e quanto você ganhou desde o início |
+| **Histórico** | todos os treinos por dia, com as séries e a melhor marca |
+| **Constância** | meta semanal e acompanhamento da semana na tela inicial |
+| **Rascunho automático** | o treino em andamento é salvo e restaurado se o Android encerrar o app |
+
+## Arquitetura
+
+```mermaid
+flowchart LR
+  U["Você treinando"] --> APP["App Android<br/>Capacitor + WebView<br/>HTML, JS e Chart.js"]
+  APP --- DRAFT[("Rascunho local<br/>localStorage")]
+  APP --> AUTH["Firebase Auth"]
+  APP --> DB[("Firestore<br/>users/uid/sessions<br/>users/uid/meta/prefs")]
+  RULES{{"Regras de segurança:<br/>cada pessoa só acessa o seu uid"}} -. protege .- DB
+
+  subgraph SITE["Site e entrega"]
+    REPO["Repositório GitHub"] --> CI["GitHub Actions<br/>links, Lighthouse"] --> PAGES["GitHub Pages<br/>site e privacidade"]
+  end
+```
+
+- **App:** Capacitor (WebView) para reaproveitar HTML, CSS e JavaScript no Android.
+- **Dados:** Firebase Authentication e Cloud Firestore. As regras de segurança do banco garantem que cada conta só leia e escreva os próprios dados.
+- **Site:** estático, sem build, publicado no GitHub Pages.
+
+## Stack do site
+
+HTML, CSS e JavaScript puros, sem framework e sem etapa de build. Animação com [GSAP](https://gsap.com) + ScrollTrigger (arquivos incluídos no repositório, em `js/vendor`). Fontes Inter e Barlow Condensed, servidas localmente. CI/CD com GitHub Actions.
+
+## Qualidade e entrega
+
+A cada `push`, o workflow [`site.yml`](.github/workflows/site.yml) roda três etapas em sequência:
+
+```mermaid
+flowchart LR
+  A["push / pull request"] --> B["checks<br/>links, âncoras, alt,<br/>sitemap, placeholders"]
+  B --> C["Lighthouse CI<br/>desempenho, acessibilidade,<br/>boas práticas, SEO"]
+  C --> D["deploy no GitHub Pages<br/>(só na branch main)"]
+```
+
+- **checks** (`scripts/check-site.mjs`): falha se houver link ou âncora local quebrada, imagem sem `alt`, página fora do sitemap ou texto-modelo esquecido.
+- **Lighthouse CI** (`lighthouserc.json`): acessibilidade, boas práticas e SEO precisam ficar acima do limite; desempenho emite aviso abaixo de 90.
+- **deploy**: só acontece na `main`, e só se as etapas anteriores passarem.
+
+Medição local, sem a compressão do servidor: desempenho 97–98, e 100 em acessibilidade, boas práticas e SEO.
+
+## Decisões e desafios
+
+Resumo; os detalhes estão no [case study](https://andreyvid.github.io/maxprogress-site/case-study.html).
+
+- **Rascunho que sumia:** o Android encerrava a tela ao trocar de app. Passei a salvar o treino a cada alteração e restaurá-lo na volta.
+- **Busca tolerante a erros:** normalização de acentos e plural, distância de edição e peso por prefixo.
+- **Script de build que só rodava uma vez:** um ajuste no código nativo sumia depois de certas operações. Passou a rodar a cada sincronização.
+- **Licenças de terceiros:** conferi a licença do mapa muscular e da base de exercícios antes de publicar e deixei os créditos dentro do app.
+- **Menos é mais:** juntei telas que repetiam informação e deixei o app menor e mais direto.
+
+## Estrutura do repositório
+
+```
+.
+├── index.html               página principal
+├── case-study.html          case study do projeto
+├── privacidade.html         política de privacidade (LGPD)
+├── excluir-conta.html       como excluir a conta e os dados
+├── 404.html · robots.txt · sitemap.xml
+├── css/style.css            estilos, temas e modos de animação
+├── js/
+│   ├── main.js              animação do celular (GSAP + ScrollTrigger)
+│   ├── theme.js             tema, slider escuro × claro, ativar animação
+│   └── vendor/              GSAP e ScrollTrigger
+├── assets/                  logo, imagens, fontes e telas (dark/ e light/)
+├── scripts/                 build do site e verificações
+├── docs/                    arquitetura, guia de publicação e banner
+├── lighthouserc.json        metas de qualidade do Lighthouse CI
+└── .github/workflows/       pipeline de CI/CD
+```
+
+## Rodando localmente
+
+Não precisa instalar nada. Abra o `index.html` no navegador ou sirva a pasta:
+
+```bash
+python3 -m http.server 8000
+# abra http://localhost:8000
+```
+
+Para rodar as mesmas verificações do CI:
+
+```bash
+node scripts/check-site.mjs      # links, imagens, sitemap
+bash scripts/build-site.sh       # monta a pasta _site/ que vai para o ar
+```
+
+## Mexendo no site
+
+- **Trocar as telas:** cada tela tem uma versão escura e uma clara, com o mesmo nome, em `assets/screens/dark/` e `assets/screens/light/` (`.webp`, cerca de 780×1688). As duas devem ter o mesmo conteúdo, para o slider ficar alinhado. Antes de publicar, apague a barra de status do celular e dados pessoais (e-mail, nome).
+- **Tema:** as cores ficam em variáveis no topo de `css/style.css`; `js/theme.js` alterna o tema e guarda a escolha.
+- **Animação:** as constantes no topo de `js/main.js` controlam ritmo, distância e giro.
+- **Publicar e domínio próprio:** veja [`docs/PUBLICAR.md`](docs/PUBLICAR.md).
 
 ## Licenças de terceiros
-- GSAP 3.15 + ScrollTrigger (`js/vendor`): licença "no charge" da GreenSock — https://gsap.com/standard-license
-- Inter e Barlow Condensed (`assets/fonts`): SIL OFL 1.1 (arquivos de licença na pasta).
 
-## Qualidade e deploy (GitHub Actions)
-Workflow em `.github/workflows/site.yml`:
-1. **checks**: `node scripts/check-site.mjs` (links e âncoras locais, imagens com `alt`, sitemap, placeholders esquecidos).
-2. **lighthouse**: monta `_site/` e roda Lighthouse CI (`lighthouserc.json`): acessibilidade, boas práticas e SEO devem ficar ≥ 90–95; desempenho só avisa abaixo de 90.
-3. **deploy**: só em `main`, publica `_site/` no GitHub Pages.
+- **GSAP** e ScrollTrigger (`js/vendor`): licença "no charge" da GreenSock, em <https://gsap.com/standard-license>.
+- **Inter** e **Barlow Condensed** (`assets/fonts`): SIL Open Font License 1.1 (arquivos de licença na pasta).
 
-Medição local (sem compressão do servidor): desempenho 94–99, acessibilidade 100, boas práticas 100, SEO 100.
-Para montar a pasta publicada localmente: `bash scripts/build-site.sh`.
+Fora os itens acima, o código, os textos e as imagens deste repositório são de minha autoria. Por ora não há licença de reuso: todos os direitos reservados.
 
-## Colocar no ar (passo a passo)
-1. **E-mail de contato:** já configurado como `maxprogress.app@gmail.com` em `privacidade.html` e `excluir-conta.html`. Se trocar, o check do CI falha caso o texto `CONTATO_EMAIL` volte a aparecer.
-2. **Repositório:** crie `maxprogress-site` no GitHub (público), envie estes arquivos para a branch `main`.
-3. **Pages:** Settings → Pages → Source: **GitHub Actions**. O primeiro push em `main` publica em `https://andreyvid.github.io/maxprogress-site/`.
-4. **Domínio (opcional):** registre `maxprogress.com.br` no Registro.br e, no DNS, crie 4 registros `A` para o domínio raiz (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) e um `CNAME` de `www` para `andreyvid.github.io`. Depois crie um arquivo `CNAME` na raiz do repositório contendo `maxprogress.com.br`, defina o domínio em Settings → Pages e marque "Enforce HTTPS" quando liberar.
-   Só crie o arquivo `CNAME` depois que o DNS estiver apontando; antes disso o site sairia do ar.
-5. **Se não usar esse domínio:** troque `https://maxprogress.com.br` pelo endereço real em `index.html` (canonical, Open Graph), `case-study.html`, `privacidade.html`, `excluir-conta.html`, `robots.txt` e `sitemap.xml`.
+## Próximos passos
 
-## Antes de divulgar, confirme
-- Textos de **privacidade** e **exclusão de conta** (prazo de 30 dias, "sem anúncios", "não direcionado a menores de 13"): ajuste ao que o app realmente faz. Não é aconselhamento jurídico.
-- A Play Store exige que o app também ofereça uma opção de excluir conta **dentro do app**; hoje a tela Conta só tem "Sair da conta".
-- O texto do **case study** (`case-study.html`) usa só fatos do projeto; ajuste a motivação e a lista de "Próximos passos" ao que você pretende mesmo fazer.
+- [ ] Pipeline de CI do app Android (build, testes e artefato a cada tag)
+- [ ] Botão de excluir conta dentro do app
+- [ ] Regras do Firestore versionadas e implantadas por pipeline
+- [ ] Publicação na Play Store
+
+## Autor
+
+**Andreyvid** — estudante de Engenharia da Computação (8º semestre), buscando estágio ou vaga júnior em TI. Minha base é Java e o meu objetivo é migrar para DevOps e Cloud.
+
+- GitHub: [@Andreyvid](https://github.com/Andreyvid)
+- Contato do projeto: maxprogress.app@gmail.com
