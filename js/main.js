@@ -135,37 +135,43 @@
     var steps = gsap.utils.toArray('.step', section);
     var dots = gsap.utils.toArray('.dot', section);
     var n = steps.length;
-    var TILT = 15;                                   // graus de inclinação para cada lado
-    function tilt(i) { return i % 2 === 0 ? -TILT : TILT; }
-    var HOLD_M = 0.55, MOVE_M = 0.55;
+    var REST = -12;                                  // posição de descanso: levemente virado
+    var HOLD_M = 0.5, MOVE_M = 1.0;                  // cada troca é uma volta completa
+    var hint = section.querySelector('.m-hint');
 
-    gsap.set(phone, { rotationY: -160, rotationX: 10, scale: 0.84 });
+    gsap.set(phone, { rotationY: REST + 180, rotationX: 8, scale: 0.84 });
     gsap.set(steps, { opacity: 0, y: 18 });
     gsap.set(shots, { opacity: function (i) { return i === 0 ? 1 : 0; } });
+    if (hint) gsap.set(hint, { opacity: 1 });
 
     var tl = gsap.timeline({ defaults: { ease: 'none' }, onUpdate: function () { setActive(tl.time()); } });
     var mids = [];
     var t = 0;
 
-    tl.to(phone, { rotationY: tilt(0), rotationX: 5, scale: 1, duration: INTRO, ease: 'power2.out' }, 0);
+    // Intro: o celular chega de costas e vira para a frente; a dica de rolagem some.
+    tl.to(phone, { rotationY: REST, rotationX: 5, scale: 1, duration: INTRO, ease: 'power2.out' }, 0);
     tl.to(steps[0], { opacity: 1, y: 0, duration: INTRO * 0.5, ease: 'power1.out' }, INTRO * 0.5);
+    if (hint) tl.to(hint, { opacity: 0, duration: 0.5, ease: 'power1.out' }, 0.25);
     t = INTRO + HOLD_M;
 
+    // Cada passo: o celular dá uma volta completa (360°). A tela troca quando ele está de costas.
     for (var i = 0; i < n - 1; i++) {
       var s = t;
       mids.push(s + MOVE_M / 2);
-      tl.to(steps[i], { opacity: 0, y: -16, duration: MOVE_M * 0.4, ease: 'power1.in' }, s);
-      tl.to(phone, { rotationY: tilt(i + 1), duration: MOVE_M, ease: 'power2.inOut' }, s);
-      tl.to(phone, { rotationX: 11, scale: 1.06, duration: MOVE_M / 2, ease: 'power2.out' }, s);
-      tl.to(phone, { rotationX: 5, scale: 1, duration: MOVE_M / 2, ease: 'power2.in' }, s + MOVE_M / 2);
-      tl.to(shots[i], { opacity: 0, duration: MOVE_M * 0.4 }, s + MOVE_M * 0.3);
-      tl.to(shots[i + 1], { opacity: 1, duration: MOVE_M * 0.4 }, s + MOVE_M * 0.3);
-      tl.to(steps[i + 1], { opacity: 1, y: 0, duration: MOVE_M * 0.4, ease: 'power1.out' }, s + MOVE_M * 0.65);
+      tl.to(steps[i], { opacity: 0, y: -16, duration: MOVE_M * 0.3, ease: 'power1.in' }, s);
+      tl.to(phone, { rotationY: REST - 360 * (i + 1), duration: MOVE_M, ease: 'power2.inOut' }, s);
+      tl.to(phone, { scale: 1.1, rotationX: 10, duration: MOVE_M / 2, ease: 'sine.out' }, s);
+      tl.to(phone, { scale: 1, rotationX: 5, duration: MOVE_M / 2, ease: 'sine.in' }, s + MOVE_M / 2);
+      tl.to(shots[i], { opacity: 0, duration: MOVE_M * 0.1 }, s + MOVE_M * 0.45);
+      tl.to(shots[i + 1], { opacity: 1, duration: MOVE_M * 0.1 }, s + MOVE_M * 0.45);
+      tl.to(steps[i + 1], { opacity: 1, y: 0, duration: MOVE_M * 0.3, ease: 'power1.out' }, s + MOVE_M * 0.7);
       t = s + MOVE_M + HOLD_M;
     }
 
+    // Outro: texto some e o celular fica de frente.
+    var endY = REST - 360 * (n - 1);
     tl.to(steps[n - 1], { opacity: 0, y: -16, duration: OUTRO * 0.5, ease: 'power1.in' }, t);
-    tl.to(phone, { rotationY: 0, rotationX: 0, scale: 1.03, duration: OUTRO, ease: 'power2.inOut' }, t);
+    tl.to(phone, { rotationY: endY + 12, rotationX: 0, scale: 1.03, duration: OUTRO, ease: 'power2.inOut' }, t);
     tl.to({}, { duration: 0.1 }, t + OUTRO);
 
     function setActive(time) {
@@ -177,7 +183,7 @@
     ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: function () { return '+=' + Math.round(tl.duration() * 80 * window.innerHeight / 100); },
+      end: function () { return '+=' + Math.round(tl.duration() * 70 * window.innerHeight / 100); },
       pin: true,
       refreshPriority: 1,
       scrub: 0.6,
