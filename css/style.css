@@ -202,6 +202,9 @@ footer{background:var(--bg)}
 .diagram-list b{color:var(--tx)}
 code{font:13.5px ui-monospace,Menlo,Consolas,monospace;background:var(--soft);padding:1px 6px;border-radius:6px}
 @media (min-width:760px){.diagram-svg{display:block}.diagram-list{display:none}}
+.more{margin:-6px 0 22px}
+.more a{color:var(--or-ink);font:600 16px "Inter",sans-serif;text-decoration:none;border-bottom:1.5px solid var(--or);padding-bottom:2px}
+.more a:hover{border-bottom-color:var(--or-ink)}
 .sub{font:700 clamp(26px,3.4vw,38px)/1.05 "Barlow Condensed",sans-serif;text-transform:uppercase;margin:0 0 20px}
 .cards--2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .cards--2 .card h3{margin-top:0}
@@ -256,3 +259,29 @@ html:not(.js) .cmp-input,html:not(.js) .cmp-tabs,html:not(.js) .cmp-hint{display
 .cmp-tabs button{padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--mu);font:500 14px "Inter",sans-serif;cursor:pointer}
 .cmp-tabs button.is-on{background:var(--or);border-color:var(--or);color:#17161B;font-weight:600}
 .cmp-hint{font-size:13.5px;color:var(--mu);margin:0!important}
+
+/* ===== Vitrine — modo celular (classe is-m: tela estreita com JS e movimento permitido) =====
+   O celular 3D fica fixo no alto, centralizado, e o texto de cada passo troca embaixo. */
+.is-m{--ph:min(52vh,112vw);--ph:min(52svh,112vw);--hd:72px}
+.is-m #showcase{height:100vh;height:100svh;padding:0;overflow:hidden;position:relative}
+.is-m .stage{position:relative;height:100%;width:100%}
+.is-m .phone-wrap{display:block;position:absolute;left:50%;top:calc(var(--hd) + 1.5vh);width:var(--pw);height:var(--ph);margin-left:calc(var(--pw) / -2);z-index:2;pointer-events:none}
+.is-m .phone-shadow{position:absolute;left:8%;right:8%;bottom:-4%;height:6%;border-radius:50%;background:rgba(0,0,0,.7);filter:blur(18px)}
+.is-m .phone-persp{width:100%;height:100%;perspective:1100px}
+.is-m .steps{position:absolute;inset:0;display:block;max-width:none;margin:0;z-index:3;pointer-events:none}
+.is-m .step{position:absolute;left:7vw;right:7vw;top:calc(var(--hd) + var(--ph) + 4.5vh);display:block;text-align:center;opacity:0}
+.is-m .step:first-child{opacity:1}
+.is-m .step-shot{display:none}
+.is-m .step-inner{max-width:520px;margin:0 auto}
+.is-m .step h2{font-size:clamp(28px,8.4vw,42px)}
+.is-m .step-inner p{font-size:clamp(15px,4vw,17.5px);line-height:1.5}
+.is-m .dots{display:flex;gap:9px;position:absolute;left:50%;bottom:4.4vh;transform:translateX(-50%);z-index:4}
+.is-m .proto-note{display:none}
+.is-m .motion-note{display:none}
+html[data-motion="on"].is-m .motion-note{display:block;position:absolute;left:5vw;right:5vw;bottom:.8vh;z-index:6;margin:0;max-width:none;text-align:center;font-size:11.5px;padding:5px 10px}
+
+/* ===== Toque e foco: sem borda azul do navegador; foco por teclado continua visível ===== */
+a,button,.cmp-view,.cmp-input,.phone-flat,.theme-btn{-webkit-tap-highlight-color:transparent}
+button:focus:not(:focus-visible),a:focus:not(:focus-visible),.cmp-input:focus:not(:focus-visible){outline:none}
+.cmp-view,.cmp-view *,.phone-wrap,.phone-flat img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.cmp-view img,.phone-flat img,.phone-wrap img{-webkit-user-drag:none;user-drag:none}

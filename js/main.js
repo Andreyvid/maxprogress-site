@@ -6,11 +6,14 @@
 
   var root = document.documentElement;
   var FORCED = root.getAttribute('data-motion') === 'on';   // pessoa ativou a animação manualmente
-  var COND = '(min-width: 900px) and (min-height: 560px)' + (FORCED ? '' : ' and (prefers-reduced-motion: no-preference)');
+  var CALM = FORCED ? '' : ' and (prefers-reduced-motion: no-preference)';
+  var COND = '(min-width: 900px) and (min-height: 560px)' + CALM;          // computador: celular de lado
+  var COND_M = '(max-width: 899px) and (min-height: 480px)' + CALM;        // celular: celular no alto, texto embaixo
 
   // Se o GSAP não carregou, volta para a versão simples.
-  if (!window.gsap || !window.ScrollTrigger) { root.classList.remove('is-3d'); return; }
+  if (!window.gsap || !window.ScrollTrigger) { root.classList.remove('is-3d'); root.classList.remove('is-m'); return; }
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });   // a barra do navegador no celular não deve refazer a animação
 
   // Ajustes de movimento
   var HOLD = 0.6;            // tempo "parado" em cada tela (unidades da timeline)
@@ -121,5 +124,67 @@
       stage.style.removeProperty('--off');
       root.classList.remove('is-3d');
     };
+  });
+  // ===== Modo celular: o celular fica no alto, centralizado, e vira de um lado para o outro a cada tela =====
+  mm.add(COND_M, function () {
+    root.classList.add('is-m');
+
+    var section = document.getElementById('showcase');
+    var phone = section.querySelector('.phone');
+    var shots = gsap.utils.toArray('.phone .screen .shot', section);
+    var steps = gsap.utils.toArray('.step', section);
+    var dots = gsap.utils.toArray('.dot', section);
+    var n = steps.length;
+    var TILT = 15;                                   // graus de inclinação para cada lado
+    function tilt(i) { return i % 2 === 0 ? -TILT : TILT; }
+    var HOLD_M = 0.55, MOVE_M = 0.55;
+
+    gsap.set(phone, { rotationY: -160, rotationX: 10, scale: 0.84 });
+    gsap.set(steps, { opacity: 0, y: 18 });
+    gsap.set(shots, { opacity: function (i) { return i === 0 ? 1 : 0; } });
+
+    var tl = gsap.timeline({ defaults: { ease: 'none' }, onUpdate: function () { setActive(tl.time()); } });
+    var mids = [];
+    var t = 0;
+
+    tl.to(phone, { rotationY: tilt(0), rotationX: 5, scale: 1, duration: INTRO, ease: 'power2.out' }, 0);
+    tl.to(steps[0], { opacity: 1, y: 0, duration: INTRO * 0.5, ease: 'power1.out' }, INTRO * 0.5);
+    t = INTRO + HOLD_M;
+
+    for (var i = 0; i < n - 1; i++) {
+      var s = t;
+      mids.push(s + MOVE_M / 2);
+      tl.to(steps[i], { opacity: 0, y: -16, duration: MOVE_M * 0.4, ease: 'power1.in' }, s);
+      tl.to(phone, { rotationY: tilt(i + 1), duration: MOVE_M, ease: 'power2.inOut' }, s);
+      tl.to(phone, { rotationX: 11, scale: 1.06, duration: MOVE_M / 2, ease: 'power2.out' }, s);
+      tl.to(phone, { rotationX: 5, scale: 1, duration: MOVE_M / 2, ease: 'power2.in' }, s + MOVE_M / 2);
+      tl.to(shots[i], { opacity: 0, duration: MOVE_M * 0.4 }, s + MOVE_M * 0.3);
+      tl.to(shots[i + 1], { opacity: 1, duration: MOVE_M * 0.4 }, s + MOVE_M * 0.3);
+      tl.to(steps[i + 1], { opacity: 1, y: 0, duration: MOVE_M * 0.4, ease: 'power1.out' }, s + MOVE_M * 0.65);
+      t = s + MOVE_M + HOLD_M;
+    }
+
+    tl.to(steps[n - 1], { opacity: 0, y: -16, duration: OUTRO * 0.5, ease: 'power1.in' }, t);
+    tl.to(phone, { rotationY: 0, rotationX: 0, scale: 1.03, duration: OUTRO, ease: 'power2.inOut' }, t);
+    tl.to({}, { duration: 0.1 }, t + OUTRO);
+
+    function setActive(time) {
+      var k = 0;
+      for (var j = 0; j < mids.length; j++) if (time >= mids[j]) k = j + 1;
+      dots.forEach(function (d, j) { d.classList.toggle('is-on', j === k); });
+    }
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: function () { return '+=' + Math.round(tl.duration() * 80 * window.innerHeight / 100); },
+      pin: true,
+      refreshPriority: 1,
+      scrub: 0.6,
+      animation: tl,
+      invalidateOnRefresh: true
+    });
+
+    return function () { root.classList.remove('is-m'); };
   });
 })();

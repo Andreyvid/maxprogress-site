@@ -1,6 +1,6 @@
 # MaxProgress — site
 
-Landing page do app: celular 3D que **gira conforme você rola**, seções de recursos, tema escuro/claro, roteiro, tecnologia e dúvidas, mais uma página de **case study** (`case-study.html`) e as páginas legais (privacidade e exclusão de conta).
+Landing page do app: celular 3D que **gira conforme você rola** (no computador fica ao lado do texto; no celular fica no alto, com o texto embaixo), seções de recursos, tema escuro/claro, roteiro, tecnologia e dúvidas, mais uma página de **case study** (`case-study.html`) e as páginas legais (privacidade e exclusão de conta).
 HTML + CSS + JS puro (sem build), pronto para GitHub Pages.
 
 ## Rodar
@@ -29,7 +29,7 @@ Workflow em `.github/workflows/site.yml`:
 3. **deploy**: só em `main`, publica `_site/` no GitHub Pages.
 
 Medição local (sem compressão do servidor): desempenho 94–99, acessibilidade 100, boas práticas 100, SEO 100.
-Para montar a pasta publicada localmente: `./scripts/build-site.sh`.
+Para montar a pasta publicada localmente: `bash scripts/build-site.sh`.
 
 ## Colocar no ar (passo a passo)
 1. **E-mail de contato:** já configurado como `maxprogress.app@gmail.com` em `privacidade.html` e `excluir-conta.html`. Se trocar, o check do CI falha caso o texto `CONTATO_EMAIL` volte a aparecer.

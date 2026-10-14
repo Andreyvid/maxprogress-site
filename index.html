@@ -19,7 +19,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="MaxProgress: seu treino, sua evolução, com a tela inicial do app">
   <meta name="twitter:card" content="summary_large_image">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"MobileApplication","name":"MaxProgress","applicationCategory":"HealthApplication","operatingSystem":"Android","inLanguage":"pt-BR","description":"Diário de treino para registrar cargas e repetições e acompanhar a evolução.","url":"https://maxprogress.com.br/","author":{"@type":"Person","name":"Dutra","url":"https://github.com/Andreyvid"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"MobileApplication","name":"MaxProgress","applicationCategory":"HealthApplication","operatingSystem":"Android","inLanguage":"pt-BR","description":"Diário de treino para registrar cargas e repetições e acompanhar a evolução.","url":"https://maxprogress.com.br/","author":{"@type":"Person","name":"Andreyvid","url":"https://github.com/Andreyvid"}}</script>
   <link rel="icon" href="assets/favicon.png">
   <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -48,8 +48,9 @@
       if (/[?&]motion=off\b/.test(location.search)) on = false;
       if (on) root.setAttribute('data-motion', 'on');
       try {
-        var q = '(min-width: 900px) and (min-height: 560px)' + (on ? '' : ' and (prefers-reduced-motion: no-preference)');
-        if (window.matchMedia(q).matches) root.classList.add('is-3d');
+        var calm = on ? '' : ' and (prefers-reduced-motion: no-preference)';
+        if (window.matchMedia('(min-width: 900px) and (min-height: 560px)' + calm).matches) root.classList.add('is-3d');
+        else if (window.matchMedia('(max-width: 899px) and (min-height: 480px)' + calm).matches) root.classList.add('is-m');
       } catch (e) {}
     })();
   </script>
@@ -92,7 +93,7 @@
       <p class="motion-note" id="motion-note" hidden>Seu sistema está configurado para reduzir animações, então mostramos as telas sem movimento. <button type="button" data-motion-toggle>Ativar a animação do celular</button></p>
       <div class="stage">
 
-        <!-- Celular 3D (só aparece no modo is-3d) -->
+        <!-- Celular 3D (só aparece nos modos is-3d e is-m) -->
         <div class="phone-wrap" aria-hidden="true">
           <div class="phone-shadow"></div>
           <div class="phone-persp">
@@ -289,7 +290,7 @@
       <header class="sec-head reveal">
         <span class="eyebrow">Por baixo do capô</span>
         <h2>Feito como projeto de portfólio</h2>
-        <p>O MaxProgress é um projeto pessoal de Dutra, estudante de Engenharia da Computação. O código do app é privado; a apresentação e este site são públicos.</p>
+        <p>O MaxProgress é um projeto pessoal de Andreyvid, estudante de Engenharia da Computação. O código do app é privado; a apresentação e este site são públicos.</p>
       </header>
       <ul class="tech reveal">
         <li>Capacitor · Android</li><li>JavaScript</li><li>Firebase Auth</li><li>Firestore</li>
@@ -349,7 +350,7 @@
       </figure>
 
       <h3 class="sub reveal">Desafios e decisões</h3>
-      <p class="reveal"><a href="case-study.html">Ler o case study completo →</a></p>
+      <p class="more reveal"><a href="case-study.html">Ler o case study completo →</a></p>
       <div class="cards cards--2">
         <article class="card reveal">
           <h3>O rascunho sumia ao trocar de app</h3>
@@ -382,7 +383,7 @@
     <section class="sec sec--narrow" id="autor">
       <div class="author reveal">
         <span class="eyebrow">Sobre o autor</span>
-        <h2>Oi, eu sou o Dutra</h2>
+        <h2>Oi, eu sou o Andreyvid</h2>
         <p>Estudo Engenharia da Computação (8º semestre) e estou buscando estágio ou vaga júnior em TI. Minha base é Java e meu objetivo é migrar para DevOps e Cloud, por isso este projeto tem deploy automático, testes de qualidade no CI e a infraestrutura documentada.</p>
         <p>O MaxProgress nasceu da vontade de acompanhar os meus próprios treinos sem complicação. Virou o projeto em que eu pratico produto, front-end, nuvem e entrega contínua.</p>
         <a class="btn btn--solid" href="https://github.com/Andreyvid" rel="noopener">GitHub · Andreyvid</a>
@@ -399,7 +400,7 @@
         <details><summary>Onde ficam os meus treinos?</summary><p>Na nuvem, ligados à sua conta, e separados dos de outras pessoas.</p></details>
         <details><summary>Funciona no iPhone?</summary><p>Ainda não. O foco agora é Android; o iOS está no roteiro.</p></details>
         <details><summary>Já posso baixar?</summary><p>O app está em beta. Quando houver link de download, ele aparece aqui.</p></details>
-        <details><summary>Posso sugerir uma melhoria?</summary><p>Pode! Fale com o Dutra pelo GitHub.</p></details>
+        <details><summary>Posso sugerir uma melhoria?</summary><p>Pode! Fale com o Andreyvid pelo GitHub.</p></details>
       </div>
     </section>
 
@@ -412,7 +413,7 @@
   </main>
 
   <footer>
-    <span>© MaxProgress · projeto de portfólio de Dutra</span>
+    <span>© MaxProgress · projeto de portfólio de Andreyvid</span>
     <nav class="foot-links" aria-label="Legal"><a href="case-study.html">Case study</a><a href="privacidade.html">Política de privacidade</a><a href="excluir-conta.html">Excluir conta e dados</a></nav>
   </footer>
 
