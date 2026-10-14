@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case study — MaxProgress</title>
+  <meta name="description" content="Case study do MaxProgress: problema, decisões técnicas, o que deu errado e o que aprendi construindo um diário de treino com Capacitor e Firebase.">
+  <meta name="theme-color" content="#17161B">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="https://maxprogress.com.br/case-study.html">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script>(function(){var t=null;try{t=localStorage.getItem('mp-theme')}catch(e){}if(t!=='light'&&t!=='dark'){try{t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){t='dark'}}document.documentElement.setAttribute('data-theme',t)})();</script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="MaxProgress, página inicial"><img src="assets/logo.png" alt="" width="26" height="30"><span>MaxProgress</span></a>
+    <nav class="nav" aria-label="Seções"><a href="index.html">Início</a><a href="case-study.html" aria-current="page">Case study</a><a href="privacidade.html">Privacidade</a></nav>
+    <button class="theme-btn" type="button" data-theme-toggle aria-label="Alternar entre tema escuro e claro" aria-pressed="false">
+      <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+  <main class="doc">
+    <span class="eyebrow">Case study</span>
+    <h1 class="doc-h1">MaxProgress</h1>
+    <p class="doc-meta">Diário de treino · Android · beta · por Dutra</p>
+    <p>Um app para registrar carga e repetições em cada exercício e ver a evolução ao longo do tempo. Comecei por uma necessidade minha: as planilhas e apps que eu usava eram lentos para anotar entre uma série e outra. Este texto conta o que decidi, o que deu errado e o que aprendi.</p>
+
+    <h2>O problema</h2>
+    <p>Quem treina anota rápido, com a mão suada e pouco tempo de descanso. Um diário de treino precisa de poucos toques para registrar uma série, perdoar erros de digitação e mostrar o progresso sem esforço. Se anotar dá trabalho, a pessoa para de anotar.</p>
+
+    <h2>Escolhas de arquitetura</h2>
+    <ul>
+      <li><strong>Capacitor (WebView) em vez de nativo.</strong> Eu já dominava HTML, CSS e JavaScript, e o mesmo código roda no navegador e no Android. Troquei desempenho bruto por velocidade de desenvolvimento, o que faz sentido para um app de formulários e gráficos.</li>
+      <li><strong>Firebase (Auth + Firestore).</strong> Login e banco sem manter servidor próprio. Cada pessoa só lê e escreve o próprio <code>{uid}</code>, garantido por regras de segurança e não pelo app.</li>
+      <li><strong>Rascunho local.</strong> O treino em andamento é salvo no aparelho a cada alteração, então nada depende de rede durante a série.</li>
+      <li><strong>Site separado e estático.</strong> O código do app é privado; o site de apresentação é público, sem build, publicado por GitHub Actions no GitHub Pages.</li>
+    </ul>
+
+    <h2>O que deu errado (e como resolvi)</h2>
+    <h3>O treino sumia ao trocar de app</h3>
+    <p>No meio do treino, abrir outro aplicativo fazia o Android encerrar a tela e o que estava digitado se perdia. Passei a salvar o rascunho a cada alteração e a restaurá-lo ao voltar.</p>
+    <h3>A busca de exercícios não perdoava erros</h3>
+    <p>Digitar “sup” mostrava “supra” antes de “supino”, e buscas de 2 letras não retornavam nada. Implementei normalização de acentos e plural, distância de edição e peso por prefixo, e corrigi esses dois casos reais.</p>
+    <h3>Um script de build que só rodava uma vez</h3>
+    <p>Um ajuste no código nativo (esconder a barra de rolagem do Android) sumia depois de certas operações. Descobri que o script só rodava na criação do projeto e passei a executá-lo a cada sincronização. Lição: tudo que altera arquivos gerados precisa ser repetível.</p>
+    <h3>Licenças de terceiros</h3>
+    <p>O mapa muscular e a base de exercícios vêm de projetos abertos. Conferi a licença de cada um (MIT e Unlicense) antes de publicar e deixei os créditos dentro do app.</p>
+
+    <h2>Decisão de produto: menos é mais</h2>
+    <p>A primeira versão tinha telas demais, com volume, histórico e progresso repetindo informação. Juntei Volume e Progresso, levei a constância para a tela inicial e coloquei login e sair dentro de “Conta”. O app ficou menor e mais fácil de usar.</p>
+
+    <h2>Qualidade e entrega</h2>
+    <ul>
+      <li>O site passa por verificação de links, acessibilidade e SEO a cada alteração, e só publica se os testes passarem.</li>
+      <li>Tema escuro e claro, com todas as telas conferidas nos dois.</li>
+      <li>Política de privacidade (LGPD) e página de exclusão de conta, exigidas para publicar na Play Store.</li>
+    </ul>
+
+    <h2>Próximos passos</h2>
+    <ul>
+      <li>Pipeline de CI do app Android (build, testes e artefato a cada tag).</li>
+      <li>Botão de excluir conta dentro do app.</li>
+      <li>Regras do Firestore versionadas e implantadas por pipeline.</li>
+      <li>Publicação na Play Store.</li>
+    </ul>
+
+    <h2>O que levei disso</h2>
+    <p>Conduzir um produto do início ao fim: decidir o que cortar, lidar com limitações da plataforma, pensar em privacidade desde o começo e automatizar a entrega. É o tipo de trabalho que quero fazer em DevOps e Cloud.</p>
+    <p><a href="index.html#bastidores">Ver o diagrama de arquitetura</a> · <a href="https://github.com/Andreyvid">GitHub</a></p>
+  </main>
+  <footer>
+    <span>© MaxProgress · projeto de portfólio de Dutra</span>
+    <nav class="foot-links" aria-label="Legal"><a href="index.html">Início</a><a href="privacidade.html">Política de privacidade</a><a href="excluir-conta.html">Excluir conta e dados</a></nav>
+  </footer>
+  <script src="js/theme.js"></script>
+</body>
+</html>

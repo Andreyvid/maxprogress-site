@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MaxProgress — diário de treino</title>
+  <meta name="description" content="MaxProgress: diário de treino para registrar cargas, ver seus músculos trabalhados e acompanhar a evolução. Protótipo da landing page.">
+  <meta name="theme-color" content="#17161B">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="https://maxprogress.com.br/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="MaxProgress">
+  <meta property="og:title" content="MaxProgress — diário de treino">
+  <meta property="og:description" content="Registre carga e repetições em segundos, veja os músculos trabalhados e acompanhe sua evolução. Em beta para Android.">
+  <meta property="og:url" content="https://maxprogress.com.br/">
+  <meta property="og:image" content="https://maxprogress.com.br/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="MaxProgress: seu treino, sua evolução, com a tela inicial do app">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"MobileApplication","name":"MaxProgress","applicationCategory":"HealthApplication","operatingSystem":"Android","inLanguage":"pt-BR","description":"Diário de treino para registrar cargas e repetições e acompanhar a evolução.","url":"https://maxprogress.com.br/","author":{"@type":"Person","name":"Dutra","url":"https://github.com/Andreyvid"}}</script>
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    /* Tema (escuro/claro) aplicado antes da primeira pintura: escolha salva ou preferência do sistema. */
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('mp-theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try { t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; } catch (e) { t = 'dark'; }
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <script>
+    /* Ativa o modo 3D cedo (evita "pulo" de layout). Sem JS, ou em tela pequena,
+       o site usa a versão simples empilhada. Quem pede "menos movimento" no sistema
+       também recebe a versão simples, a menos que ative a animação manualmente
+       (botão na página ou ?motion=on). */
+    (function () {
+      var root = document.documentElement, on = false;
+      root.classList.add('js');
+      try { on = localStorage.getItem('mp-motion') === 'on'; } catch (e) {}
+      if (/[?&]motion=on\b/.test(location.search)) on = true;
+      if (/[?&]motion=off\b/.test(location.search)) on = false;
+      if (on) root.setAttribute('data-motion', 'on');
+      try {
+        var q = '(min-width: 900px) and (min-height: 560px)' + (on ? '' : ' and (prefers-reduced-motion: no-preference)');
+        if (window.matchMedia(q).matches) root.classList.add('is-3d');
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip" href="#showcase">Ir para o app</a>
+
+  <header class="top">
+    <a class="brand" href="#top" aria-label="MaxProgress">
+      <img src="assets/logo.png" alt="" width="26" height="30">
+      <span>MaxProgress</span>
+    </a>
+    <nav class="nav" aria-label="Seções">
+      <a href="#recursos">Recursos</a>
+      <a href="#temas">Escuro e claro</a>
+      <a href="#roteiro">Roteiro</a>
+      <a href="#bastidores">Bastidores</a>
+      <a href="case-study.html">Case study</a>
+      <a href="#faq">Dúvidas</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle aria-label="Alternar entre tema escuro e claro" aria-pressed="false">
+      <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <img class="hero-logo" src="assets/logo.png" alt="" width="84" height="98">
+      <span class="badge">Em desenvolvimento · Beta · Android</span>
+      <h1>Seu treino.<br><em>Sua evolução.</em></h1>
+      <p class="lead">O diário de treino que vai direto ao ponto: registre carga e repetições em segundos, veja quais músculos você trabalhou e acompanhe o progresso exercício por exercício.</p>
+      <p class="chips" aria-label="Destaques">
+        <span>Feito em português</span><span>Tema escuro e claro</span><span>Treinos salvos na nuvem</span>
+      </p>
+      <p class="scroll-hint" aria-hidden="true">Role para ver o app <span>↓</span></p>
+    </section>
+
+    <section id="showcase" aria-label="Telas do app">
+      <p class="motion-note" id="motion-note" hidden>Seu sistema está configurado para reduzir animações, então mostramos as telas sem movimento. <button type="button" data-motion-toggle>Ativar a animação do celular</button></p>
+      <div class="stage">
+
+        <!-- Celular 3D (só aparece no modo is-3d) -->
+        <div class="phone-wrap" aria-hidden="true">
+          <div class="phone-shadow"></div>
+          <div class="phone-persp">
+            <div class="phone">
+              <div class="slab" style="--i:0"></div><div class="slab" style="--i:1"></div>
+              <div class="slab" style="--i:2"></div><div class="slab" style="--i:3"></div>
+              <div class="slab" style="--i:4"></div><div class="slab" style="--i:5"></div>
+              <div class="slab" style="--i:6"></div><div class="slab" style="--i:7"></div>
+              <div class="face back"><img src="assets/logo.png" alt="" width="84" height="98"></div>
+              <div class="face front">
+                <div class="screen">
+                  <div class="shot"><img class="t-dark" src="assets/screens/dark/01-inicio.webp" alt="Tela inicial (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/01-inicio.webp" alt="Tela inicial (tema claro)" width="780" height="1688" loading="lazy"></div>
+                  <div class="shot"><img class="t-dark" src="assets/screens/dark/02-registrar.webp" alt="Registro de treino (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/02-registrar.webp" alt="Registro de treino (tema claro)" width="780" height="1688" loading="lazy"></div>
+                  <div class="shot"><img class="t-dark" src="assets/screens/dark/03-musculos.webp" alt="Mapa de músculos (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/03-musculos.webp" alt="Mapa de músculos (tema claro)" width="780" height="1688" loading="lazy"></div>
+                  <div class="shot"><img class="t-dark" src="assets/screens/dark/04-evolucao.webp" alt="Evolução do exercício (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/04-evolucao.webp" alt="Evolução do exercício (tema claro)" width="780" height="1688" loading="lazy"></div>
+                  <div class="shot"><img class="t-dark" src="assets/screens/dark/05-historico.webp" alt="Histórico de treinos (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/05-historico.webp" alt="Histórico de treinos (tema claro)" width="780" height="1688" loading="lazy"></div>
+                </div>
+                <i class="cam"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li class="step step--left">
+            <div class="step-inner">
+              <span class="step-n">01 · Início</span>
+              <h2>Seu dia em um olhar</h2>
+              <p>Treino de hoje, constância da semana e seu último recorde, logo ao abrir o app.</p>
+            </div>
+            <figure class="step-shot"><div class="phone-flat"><img class="t-dark" src="assets/screens/dark/01-inicio.webp" alt="Tela inicial (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/01-inicio.webp" alt="Tela inicial (tema claro)" width="780" height="1688" loading="lazy"></div></figure>
+          </li>
+          <li class="step step--right">
+            <div class="step-inner">
+              <span class="step-n">02 · Registrar</span>
+              <h2>Registrar em segundos</h2>
+              <p>Escolha o exercício e lance carga e repetições. A busca entende o que você digita, até com erro de grafia, em um catálogo de 119 exercícios.</p>
+            </div>
+            <figure class="step-shot"><div class="phone-flat"><img class="t-dark" src="assets/screens/dark/02-registrar.webp" alt="Registro de treino (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/02-registrar.webp" alt="Registro de treino (tema claro)" width="780" height="1688" loading="lazy"></div></figure>
+          </li>
+          <li class="step step--left">
+            <div class="step-inner">
+              <span class="step-n">03 · Músculos</span>
+              <h2>Veja o que você treinou</h2>
+              <p>Um mapa do corpo mostra quais músculos trabalharam em cada exercício: o principal em destaque e os auxiliares em amarelo.</p>
+            </div>
+            <figure class="step-shot"><div class="phone-flat"><img class="t-dark" src="assets/screens/dark/03-musculos.webp" alt="Mapa de músculos (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/03-musculos.webp" alt="Mapa de músculos (tema claro)" width="780" height="1688" loading="lazy"></div></figure>
+          </li>
+          <li class="step step--right">
+            <div class="step-inner">
+              <span class="step-n">04 · Evolução</span>
+              <h2>Acompanhe sua evolução</h2>
+              <p>Gráfico de carga e repetições por exercício, com recorde pessoal e o quanto você ganhou desde o início.</p>
+            </div>
+            <figure class="step-shot"><div class="phone-flat"><img class="t-dark" src="assets/screens/dark/04-evolucao.webp" alt="Evolução do exercício (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/04-evolucao.webp" alt="Evolução do exercício (tema claro)" width="780" height="1688" loading="lazy"></div></figure>
+          </li>
+          <li class="step step--left">
+            <div class="step-inner">
+              <span class="step-n">05 · Histórico</span>
+              <h2>Todos os treinos, por dia</h2>
+              <p>Volte a qualquer dia e veja cada exercício e suas séries, com a melhor marca em destaque.</p>
+            </div>
+            <figure class="step-shot"><div class="phone-flat"><img class="t-dark" src="assets/screens/dark/05-historico.webp" alt="Histórico de treinos (tema escuro)" width="780" height="1688" loading="lazy"><img class="t-light" src="assets/screens/light/05-historico.webp" alt="Histórico de treinos (tema claro)" width="780" height="1688" loading="lazy"></div></figure>
+          </li>
+        </ol>
+
+        <div class="dots" aria-hidden="true"><i class="dot is-on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        <p class="proto-note">Telas reais do app · beta</p>
+      </div>
+    </section>
+
+    <section class="sec" id="numeros" aria-label="O app em números">
+      <ul class="stats reveal">
+        <li><b>119</b><span>exercícios no catálogo</span></li>
+        <li><b>2</b><span>temas: escuro e claro</span></li>
+        <li><b>2</b><span>mapas musculares: masculino e feminino</span></li>
+        <li><b>0</b><span>cliques para a data: já vem a de hoje</span></li>
+      </ul>
+    </section>
+
+    <section class="sec" id="recursos">
+      <header class="sec-head reveal">
+        <span class="eyebrow">Recursos</span>
+        <h2>Tudo o que importa na hora do treino</h2>
+        <p>Sem formulário gigante e sem tela de sobra. Cada recurso existe para você gastar menos tempo no celular e mais tempo na barra.</p>
+      </header>
+      <div class="cards">
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+          <h3>Registro rápido</h3>
+          <p>A data de hoje já vem preenchida. Treinou ontem e esqueceu? Um toque em “Outro dia” abre o calendário.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+          <h3>Busca que entende você</h3>
+          <p>Digite “sup” ou erre a grafia: o app sugere o exercício certo. Ele também aprende os apelidos que você usa.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.2"/><path d="M7 22v-7l-2-4 3-3h8l3 3-2 4v7M12 10v12"/></svg></span>
+          <h3>Mapa dos músculos</h3>
+          <p>Veja o que cada exercício trabalha: principal em laranja, auxiliar em amarelo. Há desenho masculino e feminino.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6"/></svg></span>
+          <h3>Evolução por exercício</h3>
+          <p>Gráfico de carga e repetições ao longo dos treinos, com recorde pessoal e quanto você ganhou desde o início.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2v.3h6v-.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/></svg></span>
+          <h3>Dicas de progressão</h3>
+          <p>Ao escolher o exercício, o app mostra a última vez e sugere a meta de hoje, por exemplo “40 kg × 3 → tente 40 kg × 4”.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>
+          <h3>Constância semanal</h3>
+          <p>Defina sua meta de treinos por semana e acompanhe os dias treinados logo na tela inicial.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.6-8A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/></svg></span>
+          <h3>Salvo na nuvem</h3>
+          <p>Entre com sua conta e seus treinos ficam guardados. Trocou de app no meio do treino? O rascunho continua lá.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></svg></span>
+          <h3>Seus dados, sua conta</h3>
+          <p>Cada pessoa vê só os próprios treinos. Os dados ficam em uma área separada por usuário.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sec" id="temas">
+      <div class="split">
+        <div class="reveal">
+          <span class="eyebrow">Modo escuro e claro</span>
+          <h2>Escuro na academia. Claro quando o sol bate.</h2>
+          <p>O MaxProgress tem tema escuro e tema claro, e os dois seguem a mesma identidade. O escuro poupa a vista (e a bateria, em telas OLED) no treino noturno; o claro lê bem na rua e com luz forte.</p>
+          <p>Este site também tem os dois temas. Experimente:</p>
+          <button class="btn" type="button" data-theme-toggle aria-pressed="false">
+            <span class="btn-dark">Ver em tema claro</span><span class="btn-light">Ver em tema escuro</span>
+          </button>
+        </div>
+        <div class="cmp reveal" data-cmp>
+          <div class="cmp-phone phone-flat">
+            <div class="cmp-view">
+              <img class="cmp-dark" src="assets/screens/dark/01-inicio.webp" alt="Tela inicial no tema escuro" width="780" height="1688" loading="lazy">
+              <img class="cmp-light" src="assets/screens/light/01-inicio.webp" alt="Tela inicial no tema claro" width="780" height="1688" loading="lazy">
+              <span class="cmp-tag cmp-tag--d" aria-hidden="true">Escuro</span>
+              <span class="cmp-tag cmp-tag--l" aria-hidden="true">Claro</span>
+              <span class="cmp-line" aria-hidden="true"><i></i></span>
+              <input class="cmp-input" type="range" min="0" max="100" value="50" aria-label="Comparar tema escuro e claro do app: arraste ou use as setas">
+            </div>
+          </div>
+          <div class="cmp-tabs" role="group" aria-label="Escolha a tela">
+            <button type="button" class="is-on" data-i="0" aria-pressed="true">Início</button>
+            <button type="button" data-i="1" aria-pressed="false">Registrar</button>
+            <button type="button" data-i="2" aria-pressed="false">Músculos</button>
+            <button type="button" data-i="3" aria-pressed="false">Evolução</button>
+            <button type="button" data-i="4" aria-pressed="false">Histórico</button>
+          </div>
+          <p class="cmp-hint">Arraste para comparar os dois temas do app</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="como">
+      <header class="sec-head reveal">
+        <span class="eyebrow">Como funciona</span>
+        <h2>Três toques e o treino está salvo</h2>
+      </header>
+      <ol class="how">
+        <li class="reveal"><b>1</b><h3>Escolha o exercício</h3><p>Busque pelo nome ou toque em um dos que você já usa.</p></li>
+        <li class="reveal"><b>2</b><h3>Lance carga e repetições</h3><p>Adicione quantas séries quiser e salve o treino.</p></li>
+        <li class="reveal"><b>3</b><h3>Acompanhe a evolução</h3><p>Gráficos, recordes e mapa muscular se atualizam sozinhos.</p></li>
+      </ol>
+    </section>
+
+    <section class="sec" id="roteiro">
+      <header class="sec-head reveal">
+        <span class="eyebrow">Roteiro</span>
+        <h2>O que vem por aí</h2>
+        <p>O app está em beta e cresce aos poucos. Estes itens estão planejados, sem data fechada.</p>
+      </header>
+      <ul class="road">
+        <li class="reveal"><span class="tag tag--now">Já no app</span><h3>Diário de cargas</h3><p>Registro, busca, mapa muscular, gráficos, metas e temas.</p></li>
+        <li class="reveal"><span class="tag">Planejado</span><h3>Premium</h3><p>Análise do treino com IA e fichas de treino prontas.</p></li>
+        <li class="reveal"><span class="tag">Planejado</span><h3>Cardio</h3><p>Registro manual de cardio e, depois, rastreio por GPS.</p></li>
+        <li class="reveal"><span class="tag">Planejado</span><h3>Alimentação</h3><p>Contagem de calorias com base na tabela TACO.</p></li>
+        <li class="reveal"><span class="tag">Planejado</span><h3>Vídeo por exercício</h3><p>GIFs e vídeos mostrando a execução correta.</p></li>
+        <li class="reveal"><span class="tag">Planejado</span><h3>iPhone</h3><p>Versão para iOS, depois da consolidação no Android.</p></li>
+      </ul>
+    </section>
+
+    <section class="sec" id="tecnologia">
+      <header class="sec-head reveal">
+        <span class="eyebrow">Por baixo do capô</span>
+        <h2>Feito como projeto de portfólio</h2>
+        <p>O MaxProgress é um projeto pessoal de Dutra, estudante de Engenharia da Computação. O código do app é privado; a apresentação e este site são públicos.</p>
+      </header>
+      <ul class="tech reveal">
+        <li>Capacitor · Android</li><li>JavaScript</li><li>Firebase Auth</li><li>Firestore</li>
+        <li>Chart.js</li><li>HTML + CSS</li><li>GSAP (este site)</li><li>GitHub Pages</li>
+      </ul>
+    </section>
+
+<section class="sec" id="bastidores">
+      <header class="sec-head reveal">
+        <span class="eyebrow">Bastidores</span>
+        <h2>Como o MaxProgress é feito</h2>
+        <p>O app roda em um WebView dentro de um app Android (Capacitor) e guarda os treinos no Firebase. O site é estático e publicado automaticamente a cada alteração.</p>
+      </header>
+
+      <figure class="diagram reveal">
+        <svg class="diagram-svg" viewBox="0 0 900 360" role="img" aria-label="Diagrama: a pessoa usa o app Android, que fala com Firebase Auth e Firestore protegidos por regras de segurança; o repositório do site passa pelo GitHub Actions e é publicado no GitHub Pages.">
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="d-arrow" d="M0 0 10 5 0 10z"/></marker></defs>
+          <g class="d-lane"><text x="20" y="22">APP</text></g>
+          <rect class="d-box" x="20" y="50" width="130" height="70" rx="14"/>
+          <text class="d-t" x="85" y="82" text-anchor="middle">Você</text><text class="d-mu" x="85" y="102" text-anchor="middle">treinando</text>
+          <rect class="d-box d-hl" x="210" y="35" width="250" height="100" rx="14"/>
+          <text class="d-t" x="335" y="68" text-anchor="middle">App Android</text>
+          <text class="d-mu" x="335" y="90" text-anchor="middle">Capacitor + WebView</text>
+          <text class="d-mu" x="335" y="110" text-anchor="middle">HTML · JavaScript · Chart.js</text>
+          <rect class="d-box" x="210" y="165" width="250" height="44" rx="12"/>
+          <text class="d-mu" x="335" y="192" text-anchor="middle">Rascunho local (localStorage)</text>
+          <rect class="d-box" x="560" y="20" width="300" height="52" rx="14"/>
+          <text class="d-t" x="710" y="42" text-anchor="middle">Firebase Auth</text><text class="d-mu" x="710" y="60" text-anchor="middle">conta e login</text>
+          <rect class="d-box" x="560" y="100" width="300" height="86" rx="14"/>
+          <text class="d-t" x="710" y="124" text-anchor="middle">Firestore</text>
+          <text class="d-mu d-mono" x="710" y="148" text-anchor="middle">users/{uid}/sessions</text>
+          <text class="d-mu d-mono" x="710" y="168" text-anchor="middle">users/{uid}/meta/prefs</text>
+          <rect class="d-box d-hl" x="560" y="204" width="300" height="34" rx="17"/>
+          <text class="d-mu" x="710" y="226" text-anchor="middle">Regras: cada pessoa só acessa o seu {uid}</text>
+          <path class="d-line" d="M150 85h58" marker-end="url(#ar)"/>
+          <path class="d-line" d="M335 135v28"/>
+          <path class="d-line" d="M460 62 C510 62 510 46 558 46" marker-end="url(#ar)"/>
+          <path class="d-line" d="M460 100 C510 100 510 135 558 135" marker-end="url(#ar)"/>
+          <line class="d-sep" x1="20" y1="262" x2="880" y2="262"/>
+          <g class="d-lane"><text x="20" y="284">SITE E ENTREGA</text></g>
+          <rect class="d-box" x="40" y="300" width="220" height="50" rx="14"/>
+          <text class="d-t" x="150" y="330" text-anchor="middle">Repositório GitHub</text>
+          <rect class="d-box d-hl" x="340" y="300" width="220" height="50" rx="14"/>
+          <text class="d-t" x="450" y="322" text-anchor="middle">GitHub Actions</text><text class="d-mu" x="450" y="340" text-anchor="middle">links · Lighthouse · deploy</text>
+          <rect class="d-box" x="640" y="300" width="220" height="50" rx="14"/>
+          <text class="d-t" x="750" y="322" text-anchor="middle">GitHub Pages</text><text class="d-mu" x="750" y="340" text-anchor="middle">site + privacidade</text>
+          <path class="d-line" d="M260 325h78" marker-end="url(#ar)"/>
+          <path class="d-line" d="M560 325h78" marker-end="url(#ar)"/>
+        </svg>
+        <ol class="diagram-list">
+          <li><b>Você</b> usa o <b>app Android</b> (Capacitor + WebView, com HTML, JavaScript e Chart.js).</li>
+          <li>O app guarda um <b>rascunho local</b> do treino em andamento.</li>
+          <li>A conta usa o <b>Firebase Auth</b>; os treinos ficam no <b>Firestore</b>, em <code>users/{uid}/sessions</code> e <code>users/{uid}/meta/prefs</code>.</li>
+          <li><b>Regras de segurança</b>: cada pessoa só acessa o próprio <code>{uid}</code>.</li>
+          <li>O site vai do <b>repositório GitHub</b> pelo <b>GitHub Actions</b> (links, Lighthouse, deploy) para o <b>GitHub Pages</b>.</li>
+        </ol>
+      </figure>
+
+      <h3 class="sub reveal">Desafios e decisões</h3>
+      <p class="reveal"><a href="case-study.html">Ler o case study completo →</a></p>
+      <div class="cards cards--2">
+        <article class="card reveal">
+          <h3>O rascunho sumia ao trocar de app</h3>
+          <p><b>Problema.</b> No meio do treino, abrir outro app fazia o Android encerrar a tela e o treino digitado se perdia.</p>
+          <p><b>Solução.</b> O app salva o treino em andamento a cada alteração e o restaura quando você volta.</p>
+        </article>
+        <article class="card reveal">
+          <h3>Uma busca que perdoa erros</h3>
+          <p><b>Problema.</b> Quem treina digita rápido: “sup”, “triceps frances”, letras trocadas.</p>
+          <p><b>Solução.</b> Busca com normalização de acentos e plural, distância de edição e peso por prefixo. Corrigi dois casos reais: buscas de 2 letras sem resultado e “sup” mostrando “supra” antes de “supino”.</p>
+        </article>
+        <article class="card reveal">
+          <h3>A barra de rolagem nativa do Android</h3>
+          <p><b>Problema.</b> Uma barra de rolagem do sistema aparecia por cima do app e o CSS não conseguia escondê-la.</p>
+          <p><b>Solução.</b> Um ajuste no código nativo, aplicado por script no build. Descobri que o script só rodava na criação do projeto, então passei a rodá-lo a cada sincronização.</p>
+        </article>
+        <article class="card reveal">
+          <h3>Licenças antes de publicar</h3>
+          <p><b>Problema.</b> O mapa muscular e a base de exercícios vêm de projetos de terceiros.</p>
+          <p><b>Solução.</b> Conferi a licença de cada um (MIT e Unlicense) e deixei os créditos dentro do app, em “Créditos e licenças”.</p>
+        </article>
+        <article class="card reveal">
+          <h3>Uma decisão de produto: menos é mais</h3>
+          <p><b>Problema.</b> O app começou com telas demais: volume, histórico e progresso se repetiam.</p>
+          <p><b>Solução.</b> Juntei Volume e Progresso, deixei a constância na tela inicial e levei login e sair para dentro de “Conta”.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sec sec--narrow" id="autor">
+      <div class="author reveal">
+        <span class="eyebrow">Sobre o autor</span>
+        <h2>Oi, eu sou o Dutra</h2>
+        <p>Estudo Engenharia da Computação (8º semestre) e estou buscando estágio ou vaga júnior em TI. Minha base é Java e meu objetivo é migrar para DevOps e Cloud, por isso este projeto tem deploy automático, testes de qualidade no CI e a infraestrutura documentada.</p>
+        <p>O MaxProgress nasceu da vontade de acompanhar os meus próprios treinos sem complicação. Virou o projeto em que eu pratico produto, front-end, nuvem e entrega contínua.</p>
+        <a class="btn btn--solid" href="https://github.com/Andreyvid" rel="noopener">GitHub · Andreyvid</a>
+      </div>
+    </section>
+
+    <section class="sec sec--narrow" id="faq">
+      <header class="sec-head reveal">
+        <span class="eyebrow">Dúvidas</span>
+        <h2>Perguntas frequentes</h2>
+      </header>
+      <div class="faq reveal">
+        <details><summary>O app é gratuito?</summary><p>Hoje o plano é o Gratuito. Recursos Premium, como a análise por IA, estão planejados e ainda não estão disponíveis.</p></details>
+        <details><summary>Onde ficam os meus treinos?</summary><p>Na nuvem, ligados à sua conta, e separados dos de outras pessoas.</p></details>
+        <details><summary>Funciona no iPhone?</summary><p>Ainda não. O foco agora é Android; o iOS está no roteiro.</p></details>
+        <details><summary>Já posso baixar?</summary><p>O app está em beta. Quando houver link de download, ele aparece aqui.</p></details>
+        <details><summary>Posso sugerir uma melhoria?</summary><p>Pode! Fale com o Dutra pelo GitHub.</p></details>
+      </div>
+    </section>
+
+    <section class="end reveal">
+      <img src="assets/logo.png" alt="" width="52" height="61">
+      <h2>Ainda em construção</h2>
+      <p>Todas as telas mostradas são prints reais da versão atual do app.</p>
+      <a class="btn btn--solid" href="https://github.com/Andreyvid" rel="noopener">Ver o autor no GitHub</a>
+    </section>
+  </main>
+
+  <footer>
+    <span>© MaxProgress · projeto de portfólio de Dutra</span>
+    <nav class="foot-links" aria-label="Legal"><a href="case-study.html">Case study</a><a href="privacidade.html">Política de privacidade</a><a href="excluir-conta.html">Excluir conta e dados</a></nav>
+  </footer>
+
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/ScrollTrigger.min.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
